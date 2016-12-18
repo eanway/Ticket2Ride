@@ -22,7 +22,7 @@ sym = isSymmetric(mat_cities) # test for matrix symmetry
 tsp_cities = TSP(mat_cities) # create a tsp object of the cities matrix
 
 i = 1 # initialize loop variable
-while(i <= 5000) {
+while(i <= 5000) { # a loop is needed because this algorithm doesn't always solve for the shortest.
   tour_cities_tmp = solve_TSP(tsp_cities) # calculate a tour of the cities
   length_min_tmp = tour_length(tour_cities_tmp) # calculate the length of the current tour
   
