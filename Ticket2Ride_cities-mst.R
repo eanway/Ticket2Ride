@@ -25,30 +25,28 @@ mat_mst = as.matrix(read.csv(filepath_mst,header=TRUE,row.names = 1)) # import m
 
 ## Data analysis
 mat_cities[,"Y"] = 683-mat_cities[,"Y"] # rescale location data for graphing (1024 x 684 pixel original image)
-mat_mst[which(mat_mst==Inf)] <- 0
+mat_mst[which(mat_mst==Inf)] <- 0 # set values of infinity to 0
 
-#rownames(mat_adjacency) <- gsub(".", " ", rownames(mat_adjacency))
-#colnames(mat_adjacency) <- gsub(".", " ", colnames(mat_adjacency))
+net_T2R = graph_from_adjacency_matrix(mat_adjacency,mode="undirected",weighted=TRUE) # convert adj matrix to graph object
+net_MST = graph_from_adjacency_matrix(mat_mst,mode="undirected",weighted=TRUE, diag=FALSE) # convert adj matrix to graph object
 
-net_T2R = graph_from_adjacency_matrix(mat_adjacency,mode="undirected",weighted=TRUE)
-net_MST = graph_from_adjacency_matrix(mat_mst,mode="undirected",weighted=TRUE, diag=FALSE)
+edges_mst = get.edgelist(net_MST) # 
 
-#V(net_MST)$label = rownames(mat_cities)
+vec_mst = as.vector(t(edges_mst)) # convert the edgelist into a vector by row (using transpose)
 
-edges_mst = get.edgelist(net_MST) # convert the matrix into a vector by row (using transpose)
-
-vec_mst = as.vector(t(edges_mst))
-
-edge_mst = get.edge.ids(graph=net_T2R,vp=vec_mst)
+edge_net_mst = get.edge.ids(graph=net_T2R,vp=vec_mst) # find edges along the path
 
 ## Plotting
 png(file=filepath_res, width = 1024/72, height = 683/72, units = "in", res = 200, pointsize = 18) # width = 1024 pixels, height = 683 pixels at 72 DPI
 
-ecol <- rep("gray80",ecount(net_T2R))
-ecol[edge_mst] <- "orange"
+ecol <- rep("gray80",ecount(net_T2R)) # create a vector of colors
+ecol[edge_net_mst] <- "orange" # modify colors along path
 
-E(net_T2R)$width = 1/E(net_T2R)$weight*15
-E(net_T2R)$color = ecol
+# Edges
+E(net_T2R)$width = 1/E(net_T2R)$weight*15 # set width as inverse weight
+E(net_T2R)$color = ecol # define edge color
+
+# Nodes
 V(net_T2R)$size = 8
 V(net_T2R)$color = "tan"
 V(net_T2R)$label.cex = 0.6
