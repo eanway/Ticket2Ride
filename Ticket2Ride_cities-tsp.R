@@ -24,24 +24,24 @@ mat_adjacency = as.matrix(read.csv(filepath_adjacency,header=TRUE,row.names=1)) 
 mat_tsp = as.matrix(read.csv(filepath_tsp,header=FALSE)) # import tsp path data
 
 ## Data analysis
-mat_cities[,"Y"] = 683-mat_cities[,"Y"] # rescale location data for graphing (1024 x 684 pixel original image)
-
-#rownames(mat_adjacency) <- gsub(".", " ", rownames(mat_adjacency))
-#colnames(mat_adjacency) <- gsub(".", " ", colnames(mat_adjacency))
+mat_cities[,"Y"] = 683-mat_cities[,"Y"] # rescale location data for graphing (1024 x 683 pixel original image)
 
 net_T2R = graph_from_adjacency_matrix(mat_adjacency,mode="undirected",weighted=TRUE)
 vec_tsp = as.vector(t(mat_tsp)) # convert the matrix into a vector by row (using transpose)
 
-edge_tsp = get.edge.ids(graph=net_T2R,vp=vec_tsp)
+edge_tsp = get.edge.ids(graph=net_T2R,vp=vec_tsp) # find edges along path
 
 ## Plotting
 png(file=filepath_res, width = 1024/72, height = 683/72, units = "in", res = 200, pointsize = 18) # width = 1024 pixels, height = 683 pixels at 72 DPI
 
-ecol <- rep("gray80",ecount(net_T2R))
-ecol[edge_tsp] <- "orange"
+ecol <- rep("gray80",ecount(net_T2R)) # create vector of edge colors
+ecol[edge_tsp] <- "orange" # modify colors of edges along path
 
+# Edges
 E(net_T2R)$width = 1/E(net_T2R)$weight*15
 E(net_T2R)$color = ecol
+
+# Nodes
 V(net_T2R)$size = 8
 V(net_T2R)$color = "tan"
 V(net_T2R)$label.cex = 0.6
