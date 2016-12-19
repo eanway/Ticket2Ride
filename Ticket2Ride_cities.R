@@ -24,16 +24,16 @@ mat_adjacency = as.matrix(read.csv(filepath_adjacency,header=TRUE,row.names=1)) 
 ## Data analysis
 mat_cities[,"Y"] = 683-mat_cities[,"Y"] # rescale location data for graphing (1024 x 684 pixel original image)
 
-#rownames(mat_adjacency) <- gsub(".", " ", rownames(mat_adjacency))
-#colnames(mat_adjacency) <- gsub(".", " ", colnames(mat_adjacency))
-
 net_T2R = graph_from_adjacency_matrix(mat_adjacency,mode="undirected",weighted=TRUE)
 
 
 ## Plotting
 tiff(file=filepath_res, width = 1024/72, height = 683/72, units = "in", res = 200, pointsize = 18) # width = 1024 pixels, height = 683 pixels at 72 DPI
 
+# Edges
 E(net_T2R)$width = 1/E(net_T2R)$weight*15
+
+# Nodes
 V(net_T2R)$size = 8
 V(net_T2R)$color = "tan"
 V(net_T2R)$label.cex = 0.6
